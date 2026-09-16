@@ -1,0 +1,48 @@
+# Java / Maven
+backend/target/
+backend/.mvn/wrapper/maven-wrapper.jar
+*.class
+*.jar
+!backend/mvnw
+!backend/mvnw.cmd
+
+# Project review artifacts (not committed)
+*.pdf
+PLAN_DE_TRABAJO.md
+1_Prueba_Evaluado_Fullstack_Angular_Java_WebFlux.pdf
+
+# Node / Angular
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.log
+.cursor/
+
+# Env / secrets
+.env
+.env.local
+*.pem
+*.p12
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Terraform
+infra/terraform/.terraform/
+infra/terraform/*.tfstate
+infra/terraform/*.tfstate.*
+infra/terraform/crash.log
+infra/terraform/*.tfvars
+!infra/terraform/*.tfvars.example
+
+# Test / coverage
+coverage/
+backend/.classpath
+backend/.project
+backend/.settings/
