@@ -1,0 +1,63 @@
+<main class="page">
+  <header>
+    <h1>FlashReserve</h1>
+    <p>Reserva de inventario para campañas de alta demanda. El estado se actualiza sin recargar la página.</p>
+  </header>
+
+  <section class="card">
+    <h2>Inventario</h2>
+    <button type="button" (click)="refreshInventory()">Actualizar</button>
+    <ul class="inventory">
+      <li *ngFor="let item of inventory">
+        <strong>{{ item.sku }}</strong> — {{ item.name }} — disponibles: {{ item.available }}
+      </li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <h2>Crear reserva</h2>
+    <label>Cliente <input [(ngModel)]="clientId" name="clientId" /></label>
+    <label>SKU
+      <select [(ngModel)]="sku" name="sku">
+        <option *ngFor="let item of inventory" [value]="item.sku">{{ item.sku }}</option>
+      </select>
+    </label>
+    <label>Cantidad (1-5) <input type="number" min="1" max="5" [(ngModel)]="quantity" name="quantity" /></label>
+    <label>Idempotency-Key <input [(ngModel)]="idempotencyKey" name="idempotencyKey" /></label>
+    <div class="actions">
+      <button type="button" (click)="createReservation()">Reservar</button>
+      <button type="button" class="secondary" (click)="newIdempotencyKey()">Nueva clave</button>
+    </div>
+    <p class="hint">Repetir el envío con la misma clave no vuelve a descontar inventario.</p>
+  </section>
+
+  <section class="card" *ngIf="reservation as current">
+    <h2>Estado de la reserva</h2>
+    <p><strong>ID:</strong> {{ current.id }}</p>
+    <p><strong>SKU:</strong> {{ current.sku }} × {{ current.quantity }}</p>
+    <p>
+      <strong>Estado:</strong>
+      <span class="badge" [attr.data-status]="current.status">{{ current.status }}</span>
+      <span *ngIf="polling"> · actualizando…</span>
+    </p>
+    <p><strong>Última secuencia:</strong> {{ current.lastSequence }}</p>
+    <button type="button" class="secondary" (click)="lookupReservation()">Consultar ahora</button>
+  </section>
+
+  <section class="card" *ngIf="reservation">
+    <h2>Simular proveedor</h2>
+    <p class="hint">Solo para demo local. El webhook real sigue exigiendo HMAC; el secreto no viaja al navegador.</p>
+    <label>Secuencia <input type="number" min="1" [(ngModel)]="eventSequence" name="eventSequence" /></label>
+    <label>Estado
+      <select [(ngModel)]="eventStatus" name="eventStatus">
+        <option value="CONFIRMED">CONFIRMED</option>
+        <option value="REJECTED">REJECTED</option>
+      </select>
+    </label>
+    <button type="button" (click)="confirmWithProvider()">Enviar evento</button>
+    <p *ngIf="lastProviderOutcome"><strong>Resultado:</strong> {{ lastProviderOutcome }}</p>
+  </section>
+
+  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+  <p class="info" *ngIf="infoMessage">{{ infoMessage }}</p>
+</main>
