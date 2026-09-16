@@ -1,0 +1,11 @@
+.git
+**/.git
+**/node_modules
+frontend/dist
+frontend/.angular
+backend/target
+**/*.md
+docs
+PLAN_DE_TRABAJO.md
+1_Prueba_Evaluado_Fullstack_Angular_Java_WebFlux.pdf
+infra/terraform/.terraform

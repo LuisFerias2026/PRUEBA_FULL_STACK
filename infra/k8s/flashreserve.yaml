@@ -1,0 +1,165 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: flashreserve
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: flashreserve-config
+  namespace: flashreserve
+data:
+  CORS_ORIGINS: "http://flashreserve.local"
+  SPRING_APPLICATION_NAME: flashreserve
+  APP_DEMO_ENABLED: "false"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: flashreserve-secrets
+  namespace: flashreserve
+type: Opaque
+stringData:
+  MONGODB_URI: mongodb://mongo:27017/flashreserve
+  PROVIDER_HMAC_SECRET: change-me-in-a-real-cluster
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo
+  namespace: flashreserve
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      containers:
+        - name: mongo
+          image: mongo:7.0
+          ports:
+            - containerPort: 27017
+          readinessProbe:
+            tcpSocket:
+              port: 27017
+            initialDelaySeconds: 5
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo
+  namespace: flashreserve
+spec:
+  selector:
+    app: mongo
+  ports:
+    - port: 27017
+      targetPort: 27017
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flashreserve-backend
+  namespace: flashreserve
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: flashreserve-backend
+  template:
+    metadata:
+      labels:
+        app: flashreserve-backend
+    spec:
+      containers:
+        - name: backend
+          image: flashreserve-backend:local
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: flashreserve-config
+            - secretRef:
+                name: flashreserve-secrets
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flashreserve-backend
+  namespace: flashreserve
+spec:
+  selector:
+    app: flashreserve-backend
+  ports:
+    - port: 8080
+      targetPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flashreserve-frontend
+  namespace: flashreserve
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flashreserve-frontend
+  template:
+    metadata:
+      labels:
+        app: flashreserve-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: flashreserve-frontend:local
+          ports:
+            - containerPort: 80
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 3
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flashreserve-frontend
+  namespace: flashreserve
+spec:
+  selector:
+    app: flashreserve-frontend
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 80

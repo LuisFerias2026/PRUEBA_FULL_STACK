@@ -1,0 +1,32 @@
+services:
+  mongo:
+    image: mongo:7.0
+    ports:
+      - "27017:27017"
+    volumes:
+      - flashreserve-mongo:/data/db
+
+  backend:
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile.backend
+    environment:
+      MONGODB_URI: mongodb://mongo:27017/flashreserve
+      PROVIDER_HMAC_SECRET: ${PROVIDER_HMAC_SECRET:-dev-secret-change-me}
+      CORS_ORIGINS: http://localhost:4200,http://localhost:8080
+    ports:
+      - "${BACKEND_PORT:-8080}:8080"
+    depends_on:
+      - mongo
+
+  frontend:
+    build:
+      context: ../..
+      dockerfile: infra/docker/Dockerfile.frontend
+    ports:
+      - "${FRONTEND_PORT:-4200}:80"
+    depends_on:
+      - backend
+
+volumes:
+  flashreserve-mongo:
