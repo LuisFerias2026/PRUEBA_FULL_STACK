@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: flashreserve
+  data:
+    mongodb:
+      uri: ${MONGODB_URI:mongodb://localhost:27017/flashreserve}
+      auto-index-creation: true
+
+server:
+  port: ${SERVER_PORT:8080}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: when-authorized
+
+app:
+  cors:
+    origins: ${CORS_ORIGINS:http://localhost:4200,http://localhost:8080}
+  provider:
+    hmac-secret: ${PROVIDER_HMAC_SECRET:dev-secret-change-me}
+  outbox:
+    enabled: ${OUTBOX_ENABLED:true}
+    poll-interval-ms: ${OUTBOX_POLL_INTERVAL_MS:2000}
+    sqs-queue-url: ${OUTBOX_SQS_QUEUE_URL:}
+    sqs-region: ${OUTBOX_SQS_REGION:us-east-1}
+    sqs-endpoint: ${OUTBOX_SQS_ENDPOINT:}
+  demo:
+    enabled: ${APP_DEMO_ENABLED:true}
+
+logging:
+  pattern:
+    console: "%d{ISO8601} [%thread] %-5level %logger{36} - %msg%n"
