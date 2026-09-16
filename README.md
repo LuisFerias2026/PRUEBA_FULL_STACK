@@ -129,10 +129,6 @@ cd frontend && npm test
 
 Cubre: descuento de stock, liberación si `REJECTED`, idempotencia, concurrencia anti-sobreventa, duplicados/secuencia, HMAC, demo local y polling de 2 s en el cliente.
 
-## Uso de IA
-
-La IA se utilizó de forma puntual como apoyo para revisar el scaffolding, proponer alternativas y mejorar documentación. La implementación de la lógica de negocio, las decisiones técnicas, los tests y la validación final fueron revisados y ejecutados manualmente por el autor. El registro breve está en [`docs/uso-ia.md`](docs/uso-ia.md).
-
 ## Artefactos operativos
 
 - Docker: `infra/docker/`
@@ -140,6 +136,3 @@ La IA se utilizó de forma puntual como apoyo para revisar el scaffolding, propo
 - Kubernetes: `infra/k8s/flashreserve.yaml` (representativo, probes Actuator)
 - Terraform SQS: `infra/terraform/` — `terraform plan` only, no aplicar
 
-## Registro
-
-- Uso acotado de IA: `docs/uso-ia.md`
