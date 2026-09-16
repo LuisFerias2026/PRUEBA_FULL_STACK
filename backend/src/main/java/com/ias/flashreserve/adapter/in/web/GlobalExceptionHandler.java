@@ -29,7 +29,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<ErrorResponse> handleApi(ApiException ex) {
-        return ResponseEntity.status(ex.getStatus()).body(new ErrorResponse(ex.getCode(), ex.getMessage()));
+        return ResponseEntity.status(ex.getStatus().value()).body(new ErrorResponse(ex.getCode(), ex.getMessage()));
     }
 
     @ExceptionHandler(WebExchangeBindException.class)
