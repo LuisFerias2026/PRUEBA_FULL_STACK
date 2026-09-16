@@ -13,6 +13,7 @@ public class WebConfig {
     @Bean
     public WebFluxConfigurer corsConfigurer(AppProperties properties) {
         return new WebFluxConfigurer() {
+            @SuppressWarnings("null")
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/api/**")

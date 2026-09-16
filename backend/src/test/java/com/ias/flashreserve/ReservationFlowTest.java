@@ -56,7 +56,8 @@ class ReservationFlowTest {
     @LocalServerPort
     private int port;
 
-    @BeforeEach
+    @SuppressWarnings("null")
+@BeforeEach
     void resetData() {
         reservationStore.deleteAll().block();
         processedEventStore.deleteAll().block();
@@ -97,7 +98,8 @@ class ReservationFlowTest {
                 .verifyComplete();
     }
 
-    @Test
+    @SuppressWarnings("null")
+@Test
     void rejectsInvalidQuantity() {
         webTestClient.post()
                 .uri("/api/reservations")
@@ -110,7 +112,8 @@ class ReservationFlowTest {
                 .jsonPath("$.code").isEqualTo("VALIDATION_ERROR");
     }
 
-    @Test
+    @SuppressWarnings("null")
+@Test
     void rejectsWhenStockIsInsufficient() {
         webTestClient.post()
                 .uri("/api/reservations")
@@ -161,7 +164,8 @@ class ReservationFlowTest {
                 .value(found -> assertThat(found.status().name()).isEqualTo("CONFIRMED"));
     }
 
-    @Test
+    @SuppressWarnings("null")
+@Test
     void rejectsUnsignedProviderEvent() {
         ReservationResponse created = createReservation("client-1", "SKU-FLASH-A", 1, UUID.randomUUID().toString());
         String body = eventBody("evt-unsigned", created.id(), 1, "CONFIRMED");
@@ -225,7 +229,8 @@ class ReservationFlowTest {
         assertThat(available("SKU-FLASH-A")).isEqualTo(8);
     }
 
-    @Test
+    @SuppressWarnings("null")
+@Test
     void demoProviderEndpointAppliesWithoutClientHmac() {
         ReservationResponse created = createReservation("client-1", "SKU-FLASH-A", 1, UUID.randomUUID().toString());
         webTestClient.post()
@@ -238,7 +243,8 @@ class ReservationFlowTest {
                 .value(response -> assertThat(response.outcome()).isEqualTo("APPLIED"));
     }
 
-    private ReservationResponse createReservation(String clientId, String sku, int quantity, String key) {
+    @SuppressWarnings("null")
+private ReservationResponse createReservation(String clientId, String sku, int quantity, String key) {
         return webTestClient.post()
                 .uri("/api/reservations")
                 .header("Idempotency-Key", key)
@@ -251,7 +257,8 @@ class ReservationFlowTest {
                 .getResponseBody();
     }
 
-    private WebTestClient.ResponseSpec postProviderEvent(String body) {
+    @SuppressWarnings("null")
+private WebTestClient.ResponseSpec postProviderEvent(String body) {
         return webTestClient.post()
                 .uri("/api/provider/events")
                 .header("X-Provider-Signature", hmacSignatureValidator.sign(body))
@@ -268,13 +275,15 @@ class ReservationFlowTest {
                 + "\",\"occurredAt\":\"2026-09-16T12:00:00Z\"}";
     }
 
-    private int available(String sku) {
+    @SuppressWarnings("null")
+private int available(String sku) {
         return inventoryStore.findBySku(sku)
                 .map(InventoryItem::available)
                 .block();
     }
 
-    private Mono<Integer> reserveStatus(WebClient client, String sku, String key) {
+    @SuppressWarnings("null")
+private Mono<Integer> reserveStatus(WebClient client, String sku, String key) {
         return client.post()
                 .uri("/api/reservations")
                 .header("Idempotency-Key", key)

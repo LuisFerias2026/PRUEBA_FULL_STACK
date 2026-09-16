@@ -37,6 +37,7 @@ public class MongoIndexConfig implements ApplicationRunner {
                 .block();
     }
 
+    @SuppressWarnings("null")
     private Mono<String> ensure(Class<?> type, Index index) {
         return mongoTemplate.indexOps(type)
                 .createIndex(index)

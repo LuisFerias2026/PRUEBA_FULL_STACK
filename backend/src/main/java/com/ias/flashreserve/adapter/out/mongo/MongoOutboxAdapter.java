@@ -47,6 +47,7 @@ public class MongoOutboxAdapter implements OutboxStore {
         return repository.findTop20ByStatusOrderByCreatedAtAsc(OutboxStatus.PENDING).map(this::toDomain);
     }
 
+    @SuppressWarnings("null")
     @Override
     public Mono<OutboxMessage> save(OutboxMessage message) {
         return repository.save(toDocument(message)).map(this::toDomain);

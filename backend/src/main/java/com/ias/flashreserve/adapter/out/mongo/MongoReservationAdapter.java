@@ -27,6 +27,7 @@ public class MongoReservationAdapter implements ReservationStore {
         this.mongoTemplate = mongoTemplate;
     }
 
+    @SuppressWarnings("null")
     @Override
     public Mono<Reservation> findById(String id) {
         return repository.findById(id).map(this::toDomain);
@@ -37,6 +38,7 @@ public class MongoReservationAdapter implements ReservationStore {
         return repository.findByIdempotencyKey(idempotencyKey).map(this::toDomain);
     }
 
+    @SuppressWarnings("null")
     @Override
     public Mono<Reservation> insert(Reservation reservation) {
         return repository.insert(toDocument(reservation))
@@ -44,6 +46,7 @@ public class MongoReservationAdapter implements ReservationStore {
                 .onErrorMap(DuplicateKeyException.class, error -> new DuplicateReservationKey(reservation.idempotencyKey()));
     }
 
+    @SuppressWarnings("null")
     @Override
     public Mono<Void> deleteById(String id) {
         return repository.deleteById(id);

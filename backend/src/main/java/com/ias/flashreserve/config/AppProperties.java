@@ -41,7 +41,7 @@ public class AppProperties {
 
         public String[] originArray() {
             return Arrays.stream(origins.split(","))
-                    .map(String::trim)
+                    .map(s -> s.trim())
                     .filter(s -> !s.isBlank())
                     .toArray(String[]::new);
         }

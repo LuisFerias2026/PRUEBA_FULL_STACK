@@ -21,6 +21,7 @@ public class MongoInventoryAdapter implements InventoryStore {
         this.mongoTemplate = mongoTemplate;
     }
 
+    @SuppressWarnings("null")
     @Override
     public Mono<InventoryItem> findBySku(String sku) {
         return repository.findById(sku).map(this::toDomain);
@@ -46,6 +47,7 @@ public class MongoInventoryAdapter implements InventoryStore {
         return mongoTemplate.updateFirst(query, update, InventoryDocument.class).then();
     }
 
+    @SuppressWarnings("null")
     @Override
     public Mono<InventoryItem> saveIfAbsent(InventoryItem item) {
         return repository.findById(item.sku())
